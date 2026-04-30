@@ -7,7 +7,7 @@ This project demonstrates an end-to-end data analytics workflow, transforming ra
 ## 🛠 The Data Journey (Step-by-Step)
 
 ### 1. Data Engineering & Cleansing (Excel)
-* **Preprocessing:** Cleaned and structured a dataset of **21,000+ records** to ensure data integrity.
+* **Preprocessing:** Cleaned and structured a dataset of **26,000+ records** to ensure data integrity.
 * **Normalization:** Transformed raw World Bank indicators into a tabular format ready for SQL migration.
 
 ### 2. Analytical Modeling & SQL Logic

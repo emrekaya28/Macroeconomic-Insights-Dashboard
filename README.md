@@ -25,11 +25,18 @@ This project demonstrates an end-to-end data analytics workflow, transforming ra
 
 ### 📊 Data Journey: From Raw to Insights
 ![Data Overview](Raw_vs_Cleaned_Data_Overview.png)
+*Figure 1: Comparison between multi-layered raw World Bank data and the final structured dataset ready for analysis.*
 
-### 💻 SQL Modeling
+### 💻 SQL Modeling & Pivot Logic
 ![SQL Logic](SQL_Data_Modeling_Preview.png)
+*Figure 2: Advanced SQL query using CTEs and CASE statements to pivot 8 different economic indicators into a single view.*
 
-### 📈 Power BI Dashboard
+### 📈 Power BI Interactive Solution
 ![Overview](PowerBI_Overview.png)
+*Figure 3: Main dashboard view featuring dynamic titles and automated filtering based on country selection.*
+
 ![Tooltip](Country_Scorecard_Tooltip.png)
+*Figure 4: Custom report-page tooltip providing an instant 8-KPI "Economic Scorecard" for any nation on the map.*
+
 ![Risk Analysis](Economic_Risk_Analysis.png)
+*Figure 5: Macroeconomic Risk Matrix (Quadrant Analysis) used to categorize countries by Inflation and Growth stability.*

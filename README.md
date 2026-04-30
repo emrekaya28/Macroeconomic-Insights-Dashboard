@@ -23,4 +23,13 @@ This project demonstrates an end-to-end data analytics workflow, transforming ra
 ---
 **Technical Stack:** SQL Server, Power BI (DAX & Power Query), Microsoft Excel.
 
+### 📊 Data Journey: From Raw to Insights
+![Data Overview](Raw_vs_Cleaned_Data_Overview.png)
 
+### 💻 SQL Modeling
+![SQL Logic](SQL_Data_Modeling_Preview.png)
+
+### 📈 Power BI Dashboard
+![Overview](PowerBI_Overview.png)
+![Tooltip](Country_Scorecard_Tooltip.png)
+![Risk Analysis](Economic_Risk_Analysis.png)

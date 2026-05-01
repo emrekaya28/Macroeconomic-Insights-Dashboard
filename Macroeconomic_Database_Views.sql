@@ -13,18 +13,14 @@ DESCRIPTION: This script processes raw economic data to analyze stability,
 -- ==========================================================================
 -- Ensure you have imported 'WorldBank_Cleaned_Data.csv' as a table named 'RawEconomicData'
 
-IF OBJECT_ID('v_EconomicSummary', 'V') IS NOT NULL
-    DROP VIEW v_EconomicSummary;
-GO
-
-CREATE VIEW v_EconomicSummary AS
+DROP VIEW IF EXISTS dbo.v_EconomicSummary;
+CREATE VIEW dbo.v_EconomicSummary AS
 SELECT 
     CountryName, 
     IndicatorCode, 
-    Year, 
-    Value
-FROM dbo.RawEconomicData; -- The name of the table where you uploaded the CSV file.
-GO
+    [Year], 
+    [Value]
+FROM dbo.RawEconomicData;
 
  -- ==========================================================================
 -- 1. COMPREHENSIVE MACROECONOMIC SCORECARD (2023)

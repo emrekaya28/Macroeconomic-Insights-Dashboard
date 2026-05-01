@@ -13,23 +13,25 @@ DESCRIPTION: This script processes raw economic data to analyze stability,
 -- Goal: Consolidate 8 key indicators into a wide format for global comparison.
 -- Indicators: Growth, Inflation, Unemployment, FX, Debt, FDI, etc.
 -- ==========================================================================
+
 WITH PivotData AS (
     SELECT 
         CountryName,
-        Year,
-        MAX(CASE WHEN IndicatorCode = 'NY.GDP.MKTP.KD.ZG' THEN Value END) AS Annual_Growth,
-        MAX(CASE WHEN IndicatorCode = 'FP.CPI.TOTL.ZG' THEN Value END) AS Inflation,
-        MAX(CASE WHEN IndicatorCode = 'SL.UEM.TOTL.ZS' THEN Value END) AS Unemployment,
-        MAX(CASE WHEN IndicatorCode = 'PA.NUS.FCRF' THEN Value END) AS Exchange_Rates,
-        MAX(CASE WHEN IndicatorCode = 'BN.CAB.XOKA.GD.ZS' THEN Value END) AS Current_Account_Balance,
-        MAX(CASE WHEN IndicatorCode = 'BX.KLT.DINV.WD.GD.ZS' THEN Value END) AS FDI_Net_Inflows,
-        MAX(CASE WHEN IndicatorCode = 'GC.DOD.TOTL.GD.ZS' THEN Value END) AS Central_Government_Debt,
-        MAX(CASE WHEN IndicatorCode = 'NY.GDP.PCAP.PP.CD' THEN Value END) AS GDP_Per_Capita
-    FROM v_EconomicSummary
-    GROUP BY CountryName, Year
+        [Year],
+        MAX(CASE WHEN SeriesCode = 'NY.GDP.MKTP.KD.ZG' THEN [Value] END) AS Annual_Growth,
+        MAX(CASE WHEN SeriesCode = 'FP.CPI.TOTL.ZG' THEN [Value] END) AS Inflation,
+        MAX(CASE WHEN SeriesCode = 'SL.UEM.TOTL.ZS' THEN [Value] END) AS Unemployment,
+        MAX(CASE WHEN SeriesCode = 'PA.NUS.FCRF' THEN [Value] END) AS Exchange_Rates,
+        MAX(CASE WHEN SeriesCode = 'BN.CAB.XOKA.GD.ZS' THEN [Value] END) AS Current_Account_Balance,
+        MAX(CASE WHEN SeriesCode = 'BX.KLT.DINV.WD.GD.ZS' THEN [Value] END) AS FDI_Net_Inflows,
+        MAX(CASE WHEN SeriesCode = 'GC.DOD.TOTL.GD.ZS' THEN [Value] END) AS Central_Government_Debt,
+        MAX(CASE WHEN SeriesCode = 'NY.GDP.PCAP.PP.CD' THEN [Value] END) AS GDP_Per_Capita
+    FROM dbo.RawEconomicData -- Current table name
+    GROUP BY CountryName, [Year]
 )
-SELECT * FROM PivotData
-WHERE Year = 2023
+SELECT * 
+FROM PivotData
+WHERE [Year] = 2023
 ORDER BY Annual_Growth DESC;
 
 -- ==========================================================================
@@ -39,19 +41,19 @@ ORDER BY Annual_Growth DESC;
 -- ==========================================================================
 SELECT 
     CountryName,
-    Year,
-    MAX(CASE WHEN IndicatorCode = 'NY.GDP.MKTP.KD.ZG' THEN Value END) AS [GDP Growth %],
-    MAX(CASE WHEN IndicatorCode = 'FP.CPI.TOTL.ZG' THEN Value END) AS [Inflation %],
-    MAX(CASE WHEN IndicatorCode = 'SL.UEM.TOTL.ZS' THEN Value END) AS [Unemployment %],
-    MAX(CASE WHEN IndicatorCode = 'PA.NUS.FCRF' THEN Value END) AS [Exchange Rate (USD)],
-    MAX(CASE WHEN IndicatorCode = 'BN.CAB.XOKA.GD.ZS' THEN Value END) AS [Current Account % of GDP],
-    MAX(CASE WHEN IndicatorCode = 'BX.KLT.DINV.WD.GD.ZS' THEN Value END) AS [FDI Net Inflows %],
-    MAX(CASE WHEN IndicatorCode = 'GC.DOD.TOTL.GD.ZS' THEN Value END) AS [Govt Debt % of GDP],
-    MAX(CASE WHEN IndicatorCode = 'NY.GDP.PCAP.PP.CD' THEN Value END) AS [GDP Per Capita (PPP)]
-FROM v_EconomicSummary
+    [Year],
+    MAX(CASE WHEN SeriesCode = 'NY.GDP.MKTP.KD.ZG' THEN [Value] END) AS [GDP Growth %],
+    MAX(CASE WHEN SeriesCode = 'FP.CPI.TOTL.ZG' THEN [Value] END) AS [Inflation %],
+    MAX(CASE WHEN SeriesCode = 'SL.UEM.TOTL.ZS' THEN [Value] END) AS [Unemployment %],
+    MAX(CASE WHEN SeriesCode = 'PA.NUS.FCRF' THEN [Value] END) AS [Exchange Rate (USD)],
+    MAX(CASE WHEN SeriesCode = 'BN.CAB.XOKA.GD.ZS' THEN [Value] END) AS [Current Account % of GDP],
+    MAX(CASE WHEN SeriesCode = 'BX.KLT.DINV.WD.GD.ZS' THEN [Value] END) AS [FDI Net Inflows %],
+    MAX(CASE WHEN SeriesCode = 'GC.DOD.TOTL.GD.ZS' THEN [Value] END) AS [Govt Debt % of GDP],
+    MAX(CASE WHEN SeriesCode = 'NY.GDP.PCAP.PP.CD' THEN [Value] END) AS [GDP Per Capita (PPP)]
+FROM dbo.RawEconomicData 
 WHERE CountryName = 'Turkiye' -- You can specify any country here
-GROUP BY CountryName, Year
-ORDER BY Year DESC;
+GROUP BY CountryName, [Year]
+ORDER BY [Year] DESC;
 
 -- ==========================================================================
 -- 3. ENHANCED INFLATION VOLATILITY & TREND ANALYSIS
@@ -60,15 +62,15 @@ ORDER BY Year DESC;
 -- ==========================================================================
 SELECT 
     CountryName,
-    Year,
-    Value AS Annual_Inflation,
+    [Year],
+    [Value] AS Annual_Inflation,
     -- Calculates the 3-Year rolling average to identify the underlying trend
-    AVG(Value) OVER (PARTITION BY CountryName ORDER BY Year ROWS BETWEEN 2 PRECEDING AND CURRENT ROW) AS Trend_3Y,
+    AVG([Value]) OVER (PARTITION BY CountryName ORDER BY [Year] ROWS BETWEEN 2 PRECEDING AND CURRENT ROW) AS Trend_3Y,
     -- Volatility Calculation: Measuring the deviation between current value and trend
-    ABS(Value - AVG(Value) OVER (PARTITION BY CountryName ORDER BY Year ROWS BETWEEN 2 PRECEDING AND CURRENT ROW)) AS Volatility_Gap
-FROM v_EconomicSummary
-WHERE IndicatorCode = 'FP.CPI.TOTL.ZG'
-ORDER BY CountryName, Year ASC;
+    ABS([Value] - AVG([Value]) OVER (PARTITION BY CountryName ORDER BY [Year] ROWS BETWEEN 2 PRECEDING AND CURRENT ROW)) AS Volatility_Gap
+FROM dbo.RawEconomicData
+WHERE SeriesCode = 'FP.CPI.TOTL.ZG' 
+ORDER BY CountryName, [Year] ASC;
 
 -- ==========================================================================
 -- 4. LAGGED ECONOMIC CORRELATION (Growth vs. Future Inflation)
@@ -77,18 +79,19 @@ ORDER BY CountryName, Year ASC;
 -- ==========================================================================
 WITH YearlyData AS (
     SELECT 
-        CountryName, Year,
-        MAX(CASE WHEN IndicatorCode = 'NY.GDP.MKTP.KD.ZG' THEN Value END) AS Growth,
-        MAX(CASE WHEN IndicatorCode = 'FP.CPI.TOTL.ZG' THEN Value END) AS Inflation
-    FROM v_EconomicSummary
-    GROUP BY CountryName, Year
+        CountryName, 
+        [Year],
+        MAX(CASE WHEN SeriesCode = 'NY.GDP.MKTP.KD.ZG' THEN [Value] END) AS Growth,
+        MAX(CASE WHEN SeriesCode = 'FP.CPI.TOTL.ZG' THEN [Value] END) AS Inflation
+    FROM dbo.RawEconomicData
+    GROUP BY CountryName, [Year]
 )
 SELECT 
     CountryName,
-    Year,
+    [Year],
     Growth AS Current_Year_Growth,
     -- Retrieves the growth rate from the previous year using LAG function
-    LAG(Growth) OVER (PARTITION BY CountryName ORDER BY Year) AS Previous_Year_Growth,
+    LAG(Growth) OVER (PARTITION BY CountryName ORDER BY [Year]) AS Previous_Year_Growth,
     Inflation AS Current_Year_Inflation
 FROM YearlyData
 WHERE Growth IS NOT NULL AND Inflation IS NOT NULL;
@@ -101,18 +104,23 @@ WHERE Growth IS NOT NULL AND Inflation IS NOT NULL;
 WITH CountryStats AS (
     SELECT 
         CountryName,
-        Year,
-        MAX(CASE WHEN IndicatorCode = 'NY.GDP.MKTP.KD.ZG' THEN Value END) AS Growth,
-        MAX(CASE WHEN IndicatorCode = 'FP.CPI.TOTL.ZG' THEN Value END) AS Inflation,
-        MAX(CASE WHEN IndicatorCode = 'SL.UEM.TOTL.ZS' THEN Value END) AS Unemployment
-    FROM v_EconomicSummary
-    GROUP BY CountryName, Year
+        [Year],
+        MAX(CASE WHEN SeriesCode = 'NY.GDP.MKTP.KD.ZG' THEN [Value] END) AS Growth,
+        MAX(CASE WHEN SeriesCode = 'FP.CPI.TOTL.ZG' THEN [Value] END) AS Inflation,
+        MAX(CASE WHEN SeriesCode = 'SL.UEM.TOTL.ZS' THEN [Value] END) AS Unemployment
+    FROM dbo.RawEconomicData
+    GROUP BY CountryName, [Year]
 )
 SELECT 
-    CountryName, Year, Growth, Inflation, Unemployment,
+    CountryName, 
+    [Year], 
+    Growth, 
+    Inflation, 
+    Unemployment,
+    --Calculation of Economic Stability Score using custom weighting
     ROUND((Growth * 2) - (Inflation * 0.5) - (Unemployment * 0.3), 2) AS Stability_Score
 FROM CountryStats
-WHERE Year = 2024 
+WHERE [Year] = 2024 
   AND Growth IS NOT NULL 
   AND Inflation IS NOT NULL
 ORDER BY Stability_Score DESC;
@@ -124,16 +132,16 @@ ORDER BY Stability_Score DESC;
 -- ==========================================================================
 SELECT 
     CountryName,
-    Year,
-    Value AS Inflation_Rate,
-    CASE 
-        WHEN Value <= 2 THEN 'Price Stability (Target)'
-        WHEN Value > 2 AND Value <= 10 THEN 'Moderate Inflation'
-        WHEN Value > 10 AND Value <= 40 THEN 'High Inflation'
-        WHEN Value > 40 THEN 'Hyperinflation Risk'
+    [Year],
+    [Value] AS Inflation_Rate,
+    CASE
+        WHEN [Value] <= 2 THEN 'Price Stability (Target)'
+        WHEN [Value] > 2 AND [Value] <= 10 THEN 'Moderate Inflation'
+        WHEN [Value] > 10 AND [Value] <= 40 THEN 'High Inflation'
+        WHEN [Value] > 40 THEN 'Hyperinflation Risk'
         ELSE 'No Data'
     END AS Inflation_Risk_Category
-FROM v_EconomicSummary
-WHERE IndicatorCode = 'FP.CPI.TOTL.ZG' -- Inflation Indicator
-  AND Year = 2023
-ORDER BY Value DESC;
+FROM dbo.RawEconomicData
+WHERE SeriesCode = 'FP.CPI.TOTL.ZG' 
+  AND [Year] = 2023
+ORDER BY [Value] DESC;

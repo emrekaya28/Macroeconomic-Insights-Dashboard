@@ -9,20 +9,6 @@ DESCRIPTION: This script processes raw economic data to analyze stability,
 */
  
  -- ==========================================================================
--- SETUP: DATABASE & VIEW CREATION
--- ==========================================================================
--- Ensure you have imported 'WorldBank_Cleaned_Data.csv' as a table named 'RawEconomicData'
-
-DROP VIEW IF EXISTS dbo.v_EconomicSummary;
-CREATE VIEW dbo.v_EconomicSummary AS
-SELECT 
-    CountryName, 
-    IndicatorCode, 
-    [Year], 
-    [Value]
-FROM dbo.RawEconomicData;
-
- -- ==========================================================================
 -- 1. COMPREHENSIVE MACROECONOMIC SCORECARD (2023)
 -- Goal: Consolidate 8 key indicators into a wide format for global comparison.
 -- Indicators: Growth, Inflation, Unemployment, FX, Debt, FDI, etc.

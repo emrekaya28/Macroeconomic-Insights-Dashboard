@@ -40,3 +40,12 @@ This project demonstrates an end-to-end data analytics workflow, transforming ra
 
 ![Risk Analysis](Economic_Risk_Analysis.png)
 *Figure 5: Macroeconomic Risk Matrix (Quadrant Analysis) used to categorize countries by Inflation and Growth stability.*
+
+📊 Key Insights & Economic Findings
+During this analysis, several critical macroeconomic patterns were identified using SQL-driven data exploration:
+
+1-) Inflation vs. Stability Gap: Using the Volatility Analysis query, it was observed that countries with inflation rates exceeding 10% (Moderate-to-High) show a significantly wider "Volatility Gap" compared to their 3-year trends, indicating higher economic unpredictability.  
+
+2-) Growth-Inflation Correlation (Lagged Analysis): The Lagged Correlation model suggested that "Overheating Economies" (those with very high GDP growth in the previous year) often experience a delayed uptick in inflation rates within the following 12-24 months.  
+ 
+3-) Hyperinflation Risks: The Categorical Risk Analysis identified specific clusters (primarily in emerging markets) where inflation transitioned from "High" to "Hyperinflation Risk," highlighting the urgent need for monetary policy intervention
